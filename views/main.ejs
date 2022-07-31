@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAPAPI</title>
+    <script>
+        let CountyChange = function(obj){
+            let selectCounty = obj.value;
+            let Cities = [];
+            
+            let i = Number("<%=gangwon.length%>");
+            if(selectCounty=="강원도"){
+                "<% for(let num in gangwon){%>"
+                    Cities.push("<%=gangwon[num]%>");
+                "<%}%>"
+            }
+            else if(selectCounty=="경기도"){
+                "<% for(let num in gyeonggi){%>"
+                    Cities.push("<%=gyeonggi[num]%>");
+                "<%}%>"
+            }
+            else if(selectCounty=="경상남도"){
+                "<% for(let num in gyeongsangnam){%>"
+                    Cities.push("<%=gyeongsangnam[num]%>");
+                "<%}%>"
+            }
+            else if(selectCounty=="경상북도"){
+                "<% for(let num in gyeongsangbuk){%>"
+                    Cities.push("<%=gyeongsangbuk[num]%>");
+                "<%}%>"
+            }
+            else if(selectCounty=="광주광역시"){
+                "<% for(let num in gwangju){%>"
+                    Cities.push("<%=gwangju[num]%>");
+                "<%}%>"
+            }
+            else if(selectCounty=="대구광역시"){
+                "<% for(let num in daegu){%>"
+                    Cities.push("<%=daegu[num]%>");
+                "<%}%>"
+            }
+            else if(selectCounty=="대전광역시"){
+                "<% for(let num in daejeon){%>"
+                    Cities.push("<%=daejeon[num]%>");
+                    "<%}%>"
+            }
+            else if(selectCounty=="부산광역시"){
+                "<% for(let num in busan){%>"
+                    Cities.push("<%=busan[num]%>");
+                    "<%}%>"
+            }
+            else if(selectCounty=="서울특별시"){
+                "<% for(let num in seoul){%>"
+                    Cities.push("<%=seoul[num]%>");
+                "<%}%>"
+            }
+            else if(selectCounty=="세종특별자치시"){
+                "<% for(let num in sejong){%>"
+                    Cities.push("<%=sejong[num]%>");
+                    "<%}%>"
+            }
+            else if(selectCounty=="울산광역시"){
+                "<% for(let num in ulsan){%>"
+                    Cities.push("<%=ulsan[num]%>");
+                    "<%}%>"
+            }
+            else if(selectCounty=="인천광역시"){
+                "<% for(let num in incheon){%>"
+                    Cities.push("<%=incheon[num]%>");
+                    "<%}%>"
+            }
+            else if(selectCounty=="전라남도"){
+                "<% for(let num in jeonnam){%>"
+                    Cities.push("<%=jeonnam[num]%>");
+                    "<%}%>"
+            }
+            else if(selectCounty=="전라북도"){
+                "<% for(let num in jeonbuk){%>"
+                    Cities.push("<%=jeonbuk[num]%>");
+                    "<%}%>"
+            }
+            else if(selectCounty=="제주특별자치도"){
+                "<% for(let num in jeju){%>"
+                    Cities.push("<%=jeju[num]%>");
+                    "<%}%>"
+            }
+            else if(selectCounty=="충청북도"){
+                "<% for(let num in chungbuk){%>"
+                    Cities.push("<%=chungbuk[num]%>");
+                    "<%}%>"
+            }
+            else if(selectCounty=="충청남도"){
+                "<% for(let num in chungnam){%>"
+                    Cities.push("<%=chungnam[num]%>");
+                    "<%}%>"
+            }
+            
+            let a1 = document.getElementById("Cities");
+            a1.options.length = 0;
+            let opt = document.createElement("option");
+            opt.value = 0;
+            opt.innerHTML = "시/군/구";
+            a1.appendChild(opt);
+
+            for(let num in Cities){
+                let opt = document.createElement("option");
+                opt.value = Cities[num];
+                opt.innerHTML = Cities[num];
+                a1.appendChild(opt);
+            }
+        }
+    </script>
+
+    <script>
+        let areaCode;
+        let selectDate;
+        //도시선택
+        let CityChange = function(obj){
+            let selectCity = obj.value;
+            let selectCounty = document.getElementById("Counties");
+            selectCounty = selectCounty.options[selectCounty.selectedIndex].value;
+            let text = document.getElementById("County_City");
+            text.textContent = selectCounty +"  "+ selectCity;
+            
+            let latitude;
+            let longitude;
+            "<% for(let num in areaList){ %>"
+                if(selectCity == "<%=areaList[num].City%>"){
+                    latitude = "<%=areaList[num].latitude%>"
+                    longitude = "<%=areaList[num].longitude%>"
+                    areaCode = "<%=areaList[num].area_code%>"
+                }
+            "<%}%>"
+            let container = document.getElementById('map');
+            let options = { 
+                center: new kakao.maps.LatLng(latitude,longitude),
+                level: 7
+            }
+            let map = new kakao.maps.Map(container, options);
+            let date = [];
+            
+            "<%for(let num in weatherList){ %>"
+                if(areaCode == "<%=weatherList[num].area_code%>"){
+                    date.push("<%=weatherList[num].date%>");
+                }
+            "<%}%>"
+            
+            let a3 = document.getElementById("dates");
+            a3.options.length = 0;
+            let opt = document.createElement("option");
+            opt.value = 0;
+            opt.innerHTML = "날짜";
+            a3.appendChild(opt);
+
+            for(let num in date){
+                if(num == 0){
+                    let opt = document.createElement("option");
+                    opt.value = date[num];
+                    opt.innerHTML = date[num];
+                    a3.appendChild(opt);
+                }
+                else if(date[num]!= date[num-1]){
+                    let opt = document.createElement("option");
+                    opt.value = date[num];
+                    opt.innerHTML = date[num];
+                    a3.appendChild(opt);
+                }
+            }
+            
+        }
+        //날짜선택
+        let dateSelect = function(obj){
+            selectDate = obj.value;
+            let time = [];
+
+            "<%for(let num in weatherList){ %>"
+                if(areaCode == "<%=weatherList[num].area_code%>"){
+                    if(selectDate == "<%=weatherList[num].date%>"){
+                        time.push("<%=weatherList[num].time%>")
+                    }
+                }
+            "<%}%>"
+
+            let a4 = document.getElementById("times");
+            a4.options.length = 0;
+            let opt = document.createElement("option");
+            opt.value = 0;
+            opt.innerHTML = "시간";
+            a4.appendChild(opt);
+            let buff;
+            for(let num in time){
+                if(time[num] != 0000){
+                    buff = time[num];
+                    buff = buff.replace(/0/g,"");
+                }
+                else{
+                    buff = 0;
+                }
+                let opt = document.createElement("option");
+                opt.value = time[num];
+                opt.innerHTML = buff + "시";
+                a4.appendChild(opt);
+            }
+        }
+
+        let timeSelect = function(obj){
+            let selectTime = obj.value;
+            let weatherInformation = [];
+            "<%for(let num in weatherList){ %>"
+                if(areaCode == "<%=weatherList[num].area_code%>"){
+                    if(selectDate == "<%=weatherList[num].date%>"){
+                        if(selectTime == "<%=weatherList[num].time%>"){
+                            weatherInformation[0] ={
+                                PTY : "<%=weatherList[num].PTY%>",
+                                REH : "<%=weatherList[num].REH%>",
+                                RN1 : "<%=weatherList[num].RN1%>",
+                                T1H : "<%=weatherList[num].T1H%>",
+                                UUU : "<%=weatherList[num].UUU%>",
+                                VVV : "<%=weatherList[num].VVV%>",
+                                VEC : "<%=weatherList[num].VEC%>",
+                                WSD : "<%=weatherList[num].WSD%>"
+                            };
+                        }
+                    }
+                }
+            "<%}%>"
+
+            const PTYs = ["없음","비","비/눈","눈","소나기","빗방울","빗방울눈날림","눈날림"]
+            let PTYt;
+            for(let num = 0; num < 8;num++){
+                if(weatherInformation[0].PTY == num){
+                    PTYt = PTYs[num];
+                }
+                else if(weatherInformation[0].PTY == -100){
+                    PTYt = "API에러"
+                }
+                else if(weatherInformation[0].PTY == -101){
+                    PTYt = "API에러"
+                }
+            }
+            let text = document.getElementById("weatherINFO");
+
+            if(PTYt == "API에러"){
+                text.textContent = "API에러";
+            }
+            else{
+                text.textContent = "기온 : " + weatherInformation[0].T1H +"℃  /  1시간 강수량 : "+ weatherInformation[0].RN1 
+                + "mm  /  동서바람성분 : " + weatherInformation[0].UUU + "m/s  /  남북바람성분 : " + weatherInformation[0].VVV
+                + "m/s  /  습도 : " + weatherInformation[0].REH + "%  /  강수형태 : " + PTYt + "  /  풍향 : " + weatherInformation[0].VEC
+                + "deg  /  풍속 : " + weatherInformation[0].WSD + "m/s";
+            }
+            
+            
+        }
+    </script>
+</head>
+<body>
+    <p id = "County_City">시도 시군구</p>
+    <div id="map" style="width:500px;height:400px;"></div>
+    <p id = "weatherINFO"></p>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6e730c4d78f6604ef631c9c61ab93701"></script>
+    <script>
+        let container = document.getElementById('map'); 
+        let options = { 
+            center: new kakao.maps.LatLng("<%=latitude[0]%>", "<%=longitude[0]%>"),
+            level: 7
+        };
+
+        let map = new kakao.maps.Map(container, options);
+    </script>
+
+    <select id = "Counties" onchange= "CountyChange(this)">
+        <option>시/도</option>
+        <% for(let num in County2){%>
+            <option value= "<%=County2[num]%>"><%=County2[num]%></option>
+        <%}%>
+    </select>
+    <select id="Cities" onchange="CityChange(this)">
+        <option value = 0>시/군/구</option>
+    </select>
+    <select id="dates" onchange="dateSelect(this)">
+        <option value = 0>날짜</option>
+    </select>
+    <select id="times" onchange="timeSelect(this)">
+        <option value = 0>시간</option>
+    </select>
+</body>
+</html>
